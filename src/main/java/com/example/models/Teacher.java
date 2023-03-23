@@ -1,8 +1,8 @@
 package com.example.models;
 
 
-import javax.persistence.*;
-
+//import javax.persistence.*;
+import jakarta.persistence.*;
 @Entity
 @Table(name = "teacher")
 public class Teacher {
@@ -25,6 +25,18 @@ public class Teacher {
     @JoinColumn(name = "department_id")
     private Department department;
 
+    public Teacher() {
+    }
+
+    public Teacher(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public Teacher(String fullName, Department department) {
+        this.fullName = fullName;
+        this.department = department;
+    }
+
     public Long getId() {
         return id;
     }
@@ -41,5 +53,11 @@ public class Teacher {
         this.fullName = fullName;
     }
 
+    public Department getDepartment() {
+        return department;
+    }
 
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
 }
