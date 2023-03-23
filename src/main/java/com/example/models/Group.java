@@ -3,7 +3,7 @@ package com.example.models;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "group")
+@Table(name = "student_group")
 public class Group {
     @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,7 +22,7 @@ public class Group {
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {

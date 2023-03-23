@@ -2,23 +2,16 @@ package com.example.models;
 
 
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
-@Table(name="department")
+@Table(name = "department")
 public class Department {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
-
-
-//    @OneToMany()
-//    @JoinTable(
-//            name = "department_teachers",
-//            joinColumns = {@JoinColumn (name = "department_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "teacher_id")}
-//    )
 
     @Column(name = "name", nullable = false)
     private String name;
