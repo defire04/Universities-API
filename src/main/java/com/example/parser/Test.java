@@ -10,7 +10,7 @@ import org.jsoup.select.Elements;
 public class Test {
     public static void main(String[] args) throws Exception {
         String url = "https://e-rozklad.dut.edu.ua/time-table/group?type=0";
-        Connection connection  = Jsoup.connect(url).header("Connection", "keep-alive");
+        Connection connection = Jsoup.connect(url).header("Connection", "keep-alive");
         String csrfToken = connection.get().select("meta[name=\"csrf-token\"]").attr("content");
 
         connection
@@ -29,5 +29,13 @@ public class Test {
             System.out.println(el.attr("data-content"));
             System.out.println(el.attr("title"));
         }
+    }
+}
+
+
+class Parser {
+
+    public static void parseSchedule(String uniUrl, String facultyId, String course ){
+
     }
 }

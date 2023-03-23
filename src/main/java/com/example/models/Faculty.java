@@ -2,7 +2,9 @@ package com.example.models;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="faculty")
@@ -21,7 +23,7 @@ public class Faculty {
 
     @OneToMany
     @JoinColumn(name = "faculty_id")
-    private List<Course> courses;
+    private Set<Course> courses = new HashSet<>();
 
     public Faculty() {
     }
@@ -50,11 +52,11 @@ public class Faculty {
         this.title = title;
     }
 
-    public List<Course> getCourses() {
+    public Set<Course> getCourses() {
         return courses;
     }
 
-    public void setCourses(List<Course> courses) {
+    public void setCourses(Set<Course> courses) {
         this.courses = courses;
     }
 }

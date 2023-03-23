@@ -3,6 +3,9 @@ package com.example.models;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "course")
 public class Course {
@@ -17,6 +20,9 @@ public class Course {
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private Set<Group> groups = new HashSet<>();
 
     public Course() {
     }
@@ -43,5 +49,13 @@ public class Course {
 
     public void setFaculty(Faculty faculty) {
         this.faculty = faculty;
+    }
+
+    public Set<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
     }
 }

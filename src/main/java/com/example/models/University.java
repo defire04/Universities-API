@@ -28,6 +28,9 @@ public class University {
     @JoinColumn(name = "university_id")
     private List<Faculty> faculty;
 
+    @Column(name = "url")
+    private String url;
+
     public University() {
     }
 
