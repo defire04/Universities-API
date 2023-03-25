@@ -25,7 +25,16 @@ public class Faculty {
     @JoinColumn(name = "faculty_id")
     private Set<Course> courses = new HashSet<>();
 
+    @Column(name ="value")
+    private String value;
+
     public Faculty() {
+    }
+
+    public Faculty(University university, String title, String value) {
+        this.university = university;
+        this.title = title;
+        this.value = value;
     }
 
     public Long getId() {

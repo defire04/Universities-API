@@ -6,8 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
-@Transactional(readOnly = true)
 public class UniversityService {
     private final UniversityRepository universityRepository;
 
@@ -16,8 +17,26 @@ public class UniversityService {
         this.universityRepository = universityRepository;
     }
 
-    @Transactional
+
     public void save(University university) {
-        universityRepository.save(university);
+
+        if (university.getLink() != null) {
+            universityRepository.save(university);
+        }
+    }
+
+    public boolean existsByLink(String link) {
+        return universityRepository.existsByLink(link);
+    }
+
+
+    public University getUniversityByLink(String link) {
+        return universityRepository.findByLink(link).orElse(new University(link));
+
+
+    }
+
+    public void update(University university) {
+       save(university);
     }
 }

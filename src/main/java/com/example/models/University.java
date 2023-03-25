@@ -14,7 +14,7 @@ public class University {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "link")
+    @Column(name = "link", nullable = false)
     private String link;
 
     @Column(name = "title")
@@ -28,10 +28,12 @@ public class University {
     @JoinColumn(name = "university_id")
     private List<Faculty> faculty;
 
-    @Column(name = "url")
-    private String url;
 
     public University() {
+    }
+
+    public University(String link) {
+        this.link = link;
     }
 
     public Long getId() {
