@@ -27,6 +27,11 @@ public class Course {
     public Course() {
     }
 
+    public Course(String number, Faculty faculty) {
+        this.number = number;
+        this.faculty = faculty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -55,7 +60,5 @@ public class Course {
         return groups;
     }
 
-    public void setGroups(Set<Group> groups) {
-        this.groups = groups;
-    }
+
 }

@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CourseRepository  extends JpaRepository<Course, Integer> {
-    List<Course> getCourseByIdAndFaculty(Integer id, Faculty faculty);
+
+    Optional<Course> getCourseByFacultyAndNumber(Faculty faculty, String number);
 }

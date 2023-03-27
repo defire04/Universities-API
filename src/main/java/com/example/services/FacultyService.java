@@ -2,6 +2,7 @@ package com.example.services;
 
 
 import com.example.models.Faculty;
+import com.example.models.University;
 import com.example.repository.FacultyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,13 @@ public class FacultyService {
     }
 
     @Transactional
-    public void save(Faculty faculty) {
+    public Faculty save(Faculty faculty) {
         facultyRepository.save(faculty);
+        return faculty;
     }
 
-    public Optional<Faculty> getFacultyByTitle(String title){
-        return facultyRepository.findByTitle(title);
+    public Optional<Faculty> getByTitleAndUniversity(String title, University university) {
+        return facultyRepository.findByTitleAndUniversity(title, university);
     }
+
 }

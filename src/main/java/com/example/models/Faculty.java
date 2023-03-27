@@ -68,4 +68,12 @@ public class Faculty {
     public void setCourses(Set<Course> courses) {
         this.courses = courses;
     }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }
