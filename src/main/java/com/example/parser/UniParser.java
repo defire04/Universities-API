@@ -34,7 +34,7 @@ public class UniParser {
         Connection connection = getConnection(uniUrl);
         Document doc = connection.get();
 
-        University university = universityService.getUniversityByLink(uniUrl);
+        University university = universityService.getOrCreateUniversityByLink(uniUrl);
         if (university.getTitle() == null || university.getTitle().isEmpty()) {
             Elements divTitleHeader = doc.getElementsByClass("header");
             university.setTitle(divTitleHeader.get(0).text());

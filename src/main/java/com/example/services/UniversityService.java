@@ -18,11 +18,13 @@ public class UniversityService {
     }
 
 
-    public void save(University university) {
-
-        if (university.getLink() != null) {
-            universityRepository.save(university);
+    public University save(University university) {
+        if (university.getLink() == null) {
+           throw new NullPointerException();
         }
+
+        universityRepository.save(university);
+        return university;
     }
 
     public boolean existsByLink(String link) {
@@ -30,10 +32,8 @@ public class UniversityService {
     }
 
 
-    public University getUniversityByLink(String link) {
-        return universityRepository.findByLink(link).orElse(new University(link));
-
-
+    public University getOrCreateUniversityByLink(String link) {
+        return save(universityRepository.findByLink(link).orElse(new University(link)));
     }
 
     public void update(University university) {
