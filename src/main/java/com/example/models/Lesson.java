@@ -1,7 +1,7 @@
 package com.example.models;
 
 import jakarta.persistence.*;
-import org.springframework.stereotype.Controller;
+
 
 @Entity
 @Table(name = "lesson")
@@ -23,9 +23,29 @@ public class Lesson {
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
-    @Column(name = "teacher")
-    private String teacher;
 
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+
+    @Column(name = "type_of_work")
+    private String typeOfWork;
+
+    @Column(name = "date")
+    private String date;
+
+    public Lesson(Course course, Faculty faculty, Subject subject, Teacher teacher, String date, String typeOfWork) {
+        this.course = course;
+        this.faculty = faculty;
+        this.subject = subject;
+        this.teacher = teacher;
+        this.date = date;
+        this.typeOfWork = typeOfWork;
+    }
+
+    public Lesson() {
+
+    }
 
     public Long getId() {
         return id;
@@ -59,11 +79,27 @@ public class Lesson {
         this.subject = subject;
     }
 
-    public String getTeacher() {
+    public Teacher getTeacher() {
         return teacher;
     }
 
-    public void setTeacher(String teacher) {
+    public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTypeOfWork() {
+        return typeOfWork;
+    }
+
+    public void setTypeOfWork(String typeOfWork) {
+        this.typeOfWork = typeOfWork;
     }
 }

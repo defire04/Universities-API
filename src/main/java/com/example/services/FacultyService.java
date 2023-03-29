@@ -4,7 +4,9 @@ package com.example.services;
 import com.example.models.Faculty;
 import com.example.models.University;
 import com.example.repository.FacultyRepository;
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +28,12 @@ public class FacultyService {
         return faculty;
     }
 
-    public Optional<Faculty> getByTitleAndUniversity(String title, University university) {
+    public Optional<Faculty> findByTitleAndUniversity(String title, University university) {
         return facultyRepository.findByTitleAndUniversity(title, university);
     }
 
+
+    public Faculty findByValueOnSite(String valueOnSite)  {
+        return facultyRepository.findByValueOnSite(valueOnSite).orElse(null);
+    }
 }

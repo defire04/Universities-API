@@ -10,11 +10,9 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,7 +56,7 @@ public class UniParser {
                 continue;
             }
 
-            Faculty newFaculty = facultyService.getByTitleAndUniversity(facultyTitle, university)
+            Faculty newFaculty = facultyService.findByTitleAndUniversity(facultyTitle, university)
                     .orElseGet(() -> facultyService.save(new Faculty(university, facultyTitle, faculty.val())));
         }
 
@@ -77,7 +75,7 @@ public class UniParser {
             if (courseNumber.isEmpty()) {
                 continue;
             }
-            Course newCourse = courseService.getCourseByFacultyAndNumber(faculty, courseNumber)
+            Course newCourse = courseService.findCourseByFacultyAndNumber(faculty, courseNumber)
                     .orElseGet(() -> courseService.save(new Course(courseNumber, faculty, option.val())));
         }
 
@@ -104,7 +102,7 @@ public class UniParser {
                 continue;
             }
 
-            Group newGroup = groupService.getGroupByCourseAndValueOnSite(course, groupValue)
+            Group newGroup = groupService.findGroupByCourseAndValueOnSite(course, groupValue)
                     .orElseGet(() -> groupService.save(new Group(course, option.text(), groupValue)));
         }
     }
@@ -113,16 +111,12 @@ public class UniParser {
     public List<Lesson> parseSchedule(String uniUrl, String facultyValue, String courseValue, String groupValue) throws IOException {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
-        Date now = calendar.getTime();
+        String now = dateFormat.format(calendar.getTime());
+        ;
         calendar.add(Calendar.DAY_OF_YEAR, 7);
-
         String featureDate = dateFormat.format(calendar.getTime());
         calendar.add(Calendar.DAY_OF_YEAR, -14);
         String pastDate = dateFormat.format(calendar.getTime());
-
-//        System.out.println(featureDate);
-//        System.out.println(pastDate);
 
         Document doc = getConnection(uniUrl)
                 .data("TimeTableForm[facultyId]", facultyValue)
@@ -140,6 +134,10 @@ public class UniParser {
 
         for (Element el : elements) {
             String[] lessonData = el.attr("data-content").split("<br>");
+            String dataAndTime = el.attr("title");
+
+
+
 
             Teacher teacher = teacherService.findByFullName(lessonData[3]).orElseGet(() -> teacherService.save(new Teacher(lessonData[3])));
             Subject subject = subjectService.findByTitleAndTeachersContaining(lessonData[0].replaceAll("\\[.*?\\]", ""), teacher)
@@ -149,9 +147,18 @@ public class UniParser {
                         return subjectService.save(newSub);
                     });
 
-
-//            System.out.println(el.attr("data-content"));
-//            System.out.println(el.attr("title"));
+            Lesson lesson = lessonService.findBySubjectAndDate(subject, now).orElseGet(
+                    () -> {
+                        Faculty faculty = facultyService.findByValueOnSite(facultyValue);
+                        try {
+                            return lessonService.save(new Lesson(courseService.findByFacultyValueOnSite(faculty, courseValue),
+                                    faculty, subject, teacher, dataAndTime,
+                                    lessonData[0].replaceAll("[^\\[\\]]*\\[([^\\[\\]]*)\\].*", "$1")
+                            ));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
         }
 
 

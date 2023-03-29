@@ -13,5 +13,5 @@ public interface FacultyRepository extends JpaRepository<Faculty, Integer> {
 
     Optional<Faculty> findByTitleAndUniversity(String title, University university);
 
-
+    Optional<Faculty> findByValueOnSite(String valueOnSite);
 }

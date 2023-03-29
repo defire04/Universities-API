@@ -26,9 +26,12 @@ public class CourseService {
         return course;
     }
 
-    public Optional<Course> getCourseByFacultyAndNumber(Faculty faculty, String number){
-       return courseRepository.getCourseByFacultyAndNumber(faculty, number);
+    public Optional<Course> findCourseByFacultyAndNumber(Faculty faculty, String number) {
+        return courseRepository.findCourseByFacultyAndNumber(faculty, number);
     }
 
+    public Course findByFacultyValueOnSite(Faculty faculty, String valueOnSite) {
+        return courseRepository.findByFacultyAndValueOnSite(faculty, valueOnSite).orElse(null);
+    }
 
 }

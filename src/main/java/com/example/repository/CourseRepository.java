@@ -13,5 +13,7 @@ import java.util.Optional;
 @Repository
 public interface CourseRepository  extends JpaRepository<Course, Integer> {
 
-    Optional<Course> getCourseByFacultyAndNumber(Faculty faculty, String number);
+    Optional<Course> findCourseByFacultyAndNumber(Faculty faculty, String number);
+
+    Optional<Course> findByFacultyAndValueOnSite(Faculty faculty, String valueOnSite);
 }

@@ -36,7 +36,7 @@ public class GroupService {
         return  groupRepository.findById(id);
     }
 
-    public Optional<Group> getGroupByCourseAndValueOnSite(Course course, String valueOnSite){
+    public Optional<Group> findGroupByCourseAndValueOnSite(Course course, String valueOnSite){
         return groupRepository.findGroupByCourseAndValueOnSite(course, valueOnSite);
     }
 }

@@ -22,6 +22,8 @@ public class Subject {
             inverseJoinColumns = @JoinColumn(name = "teacher_id"))
     private List<Teacher> teachers = new ArrayList<>();
 
+
+
     public Subject() {
     }
 
