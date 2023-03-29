@@ -1,13 +1,7 @@
 package com.example.parser;
 
-import com.example.models.Course;
-import com.example.models.Faculty;
-import com.example.models.Group;
-import com.example.models.University;
-import com.example.services.CourseService;
-import com.example.services.FacultyService;
-import com.example.services.GroupService;
-import com.example.services.UniversityService;
+import com.example.models.*;
+import com.example.services.*;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -18,6 +12,10 @@ import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -26,15 +24,20 @@ public class UniParser {
     private final FacultyService facultyService;
     private final UniversityService universityService;
     private final CourseService courseService;
-
     private final GroupService groupService;
+    private final SubjectService subjectService;
+    private final LessonService lessonService;
+    private final TeacherService teacherService;
 
     @Autowired
-    UniParser(FacultyService facultyService, UniversityService universityService, CourseService courseService, GroupService groupService) {
+    UniParser(FacultyService facultyService, UniversityService universityService, CourseService courseService, GroupService groupService, SubjectService subjectService, LessonService lessonService, TeacherService teacherService) {
         this.facultyService = facultyService;
         this.universityService = universityService;
         this.courseService = courseService;
         this.groupService = groupService;
+        this.subjectService = subjectService;
+        this.lessonService = lessonService;
+        this.teacherService = teacherService;
     }
 
     public void parseNecessaryInfoForUniversity(String uniUrl) throws IOException {
@@ -57,20 +60,16 @@ public class UniParser {
 
             Faculty newFaculty = facultyService.getByTitleAndUniversity(facultyTitle, university)
                     .orElseGet(() -> facultyService.save(new Faculty(university, facultyTitle, faculty.val())));
-
-//            parseCourse(uniUrl, newFaculty);
         }
 
         for (Faculty faculty : university.getFaculty()) {
             parseCourse(uniUrl, faculty);
         }
 
-        System.out.println();
     }
 
-    public void parseCourse(String uniUrl, Faculty faculty) throws IOException {
+    private void parseCourse(String uniUrl, Faculty faculty) throws IOException {
         Document doc = getConnection(uniUrl).data("TimeTableForm[facultyId]", faculty.getValueOnSite()).post();
-
 
         for (Element option : Objects.requireNonNull(doc.getElementById("timetableform-course")).select("option")) {
             String courseNumber = option.val();
@@ -91,8 +90,7 @@ public class UniParser {
     }
 
 
-    public void parseGroup(String uniUrl, Course course, Faculty faculty) throws IOException {
-
+    private void parseGroup(String uniUrl, Course course, Faculty faculty) throws IOException {
 
         Document doc = getConnection(uniUrl)
                 .data("TimeTableForm[facultyId]", faculty.getValueOnSite())
@@ -109,7 +107,55 @@ public class UniParser {
             Group newGroup = groupService.getGroupByCourseAndValueOnSite(course, groupValue)
                     .orElseGet(() -> groupService.save(new Group(course, option.text(), groupValue)));
         }
+    }
 
+
+    public List<Lesson> parseSchedule(String uniUrl, String facultyValue, String courseValue, String groupValue) throws IOException {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+
+        Date now = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_YEAR, 7);
+
+        String featureDate = dateFormat.format(calendar.getTime());
+        calendar.add(Calendar.DAY_OF_YEAR, -14);
+        String pastDate = dateFormat.format(calendar.getTime());
+
+//        System.out.println(featureDate);
+//        System.out.println(pastDate);
+
+        Document doc = getConnection(uniUrl)
+                .data("TimeTableForm[facultyId]", facultyValue)
+                .data("TimeTableForm[course]", courseValue)
+                .data("TimeTableForm[groupId]", groupValue)
+                .data("date-picker", pastDate + " - " + featureDate)
+                .data("TimeTableForm[dateStart]", pastDate)
+                .data("TimeTableForm[dateEnd]", featureDate)
+                .data("TimeTableForm[indicationDays]", "5")
+                .data("time-table-type", "1")
+                .post();
+
+
+        Elements elements = doc.select("[data-content]");
+
+        for (Element el : elements) {
+            String[] lessonData = el.attr("data-content").split("<br>");
+
+            Teacher teacher = teacherService.findByFullName(lessonData[3]).orElseGet(() -> teacherService.save(new Teacher(lessonData[3])));
+            Subject subject = subjectService.findByTitleAndTeachersContaining(lessonData[0].replaceAll("\\[.*?\\]", ""), teacher)
+                    .orElseGet(() -> {
+                        Subject newSub = new Subject(lessonData[0].replaceAll("\\[.*?\\]", ""));
+                        newSub.getTeachers().add(teacher);
+                        return subjectService.save(newSub);
+                    });
+
+
+//            System.out.println(el.attr("data-content"));
+//            System.out.println(el.attr("title"));
+        }
+
+
+        return null;
     }
 
     private Connection getConnection(String url) throws IOException {

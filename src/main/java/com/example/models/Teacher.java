@@ -3,6 +3,10 @@ package com.example.models;
 
 //import javax.persistence.*;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "teacher")
 public class Teacher {
@@ -24,6 +28,9 @@ public class Teacher {
     @ManyToOne()
     @JoinColumn(name = "department_id")
     private Department department;
+
+    @ManyToMany(mappedBy = "teachers")
+    private List<Subject> subjects = new ArrayList<>();
 
     public Teacher() {
     }

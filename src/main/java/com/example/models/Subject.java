@@ -2,6 +2,9 @@ package com.example.models;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "subject")
 public class Subject {
@@ -13,7 +16,18 @@ public class Subject {
     @Column(name = "title")
     private String title;
 
+    @ManyToMany
+    @JoinTable(name = "teacher_subject",
+            joinColumns = @JoinColumn(name = "subject_id"),
+            inverseJoinColumns = @JoinColumn(name = "teacher_id"))
+    private List<Teacher> teachers = new ArrayList<>();
+
     public Subject() {
+    }
+
+    public Subject(String title) {
+        this.title = title;
+
     }
 
     public Long getId() {
@@ -31,4 +45,10 @@ public class Subject {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public List<Teacher> getTeachers() {
+        return teachers;
+    }
+
+
 }
