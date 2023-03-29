@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Table(name = "student_group")
 public class Group {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -17,8 +17,17 @@ public class Group {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "value")
+    private String valueOnSite;
+
 
     public Group() {
+    }
+
+    public Group(Course course, String title, String valueOnSite) {
+        this.course = course;
+        this.title = title;
+        this.valueOnSite = valueOnSite;
     }
 
     public Long getId() {
@@ -43,5 +52,13 @@ public class Group {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getValueOnSite() {
+        return valueOnSite;
+    }
+
+    public void setValueOnSite(String valueOnSite) {
+        this.valueOnSite = valueOnSite;
     }
 }

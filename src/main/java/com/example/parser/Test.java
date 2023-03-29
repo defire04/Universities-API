@@ -54,7 +54,8 @@ public class Test {
         connection
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .data("_csrf-frontend", csrfToken)
-                .data("TimeTableForm[facultyId]", "1")
+                .data("TimeTableForm[facultyId]", "3")
+                .data("TimeTableForm[course]", "1")
         ;
 
 

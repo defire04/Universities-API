@@ -1,6 +1,7 @@
 package com.example.services;
 
 
+import com.example.models.Course;
 import com.example.models.Group;
 import com.example.repository.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,9 @@ public class GroupService {
     }
 
     @Transactional
-    public void save(Group group) {
+    public Group save(Group group) {
         groupRepository.save(group);
+        return group;
     }
 
     public List<Group> findAll() {
@@ -31,12 +33,10 @@ public class GroupService {
     }
 
     public Optional<Group> findById(int id) {
+        return  groupRepository.findById(id);
+    }
 
-        Optional<Group> groupOptional = groupRepository.findById(id);
-
-        Group group = groupOptional.orElseThrow(() -> new RuntimeException("Прикол"));
-
-
-        return groupRepository.findById(id);
+    public Optional<Group> getGroupByCourseAndValueOnSite(Course course, String valueOnSite){
+        return groupRepository.findGroupByCourseAndValueOnSite(course, valueOnSite);
     }
 }

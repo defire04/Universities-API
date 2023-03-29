@@ -24,12 +24,16 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private Set<Group> groups = new HashSet<>();
 
+    @Column(name = "value")
+    private String valueOnSite;
+
     public Course() {
     }
 
-    public Course(String number, Faculty faculty) {
+    public Course(String number, Faculty faculty, String valueOnSite) {
         this.number = number;
         this.faculty = faculty;
+        this.valueOnSite = valueOnSite;
     }
 
     public Long getId() {
@@ -60,5 +64,11 @@ public class Course {
         return groups;
     }
 
+    public String getValueOnSite() {
+        return valueOnSite;
+    }
 
+    public void setValueOnSite(String valueOnSite) {
+        this.valueOnSite = valueOnSite;
+    }
 }

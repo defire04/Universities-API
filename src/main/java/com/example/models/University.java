@@ -26,7 +26,7 @@ public class University {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "university_id")
-    private List<Faculty> faculty;
+    private List<Faculty> faculty = new ArrayList<>();
 
 
     public University() {
@@ -70,9 +70,5 @@ public class University {
 
     public List<Faculty> getFaculty() {
         return faculty;
-    }
-
-    public void setFaculty(List<Faculty> faculty) {
-        this.faculty = faculty;
     }
 }

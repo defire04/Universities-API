@@ -26,15 +26,15 @@ public class Faculty {
     private Set<Course> courses = new HashSet<>();
 
     @Column(name ="value")
-    private String value;
+    private String valueOnSite;
 
     public Faculty() {
     }
 
-    public Faculty(University university, String title, String value) {
+    public Faculty(University university, String title, String valueOnSite) {
         this.university = university;
         this.title = title;
-        this.value = value;
+        this.valueOnSite = valueOnSite;
     }
 
     public Long getId() {
@@ -65,15 +65,11 @@ public class Faculty {
         return courses;
     }
 
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
+    public String getValueOnSite() {
+        return valueOnSite;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
+    public void setValueOnSite(String valueOnSite) {
+        this.valueOnSite = valueOnSite;
     }
 }
