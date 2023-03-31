@@ -1,10 +1,9 @@
 package com.example.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.util.Date;
-
 
 @Entity
 @Table(name = "lesson")
@@ -16,6 +15,7 @@ public class Lesson {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Course course;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,20 +34,20 @@ public class Lesson {
     @Column(name = "type_of_work")
     private String typeOfWork;
 
+    @Column(name = "pair_number")
+    private String pairNumber;
+
     @Column(name = "date")
-    private String date;
+    private LocalDate date;
 
-    @Column(name = "created_At")
-    private LocalDate createdAt;
-
-    public Lesson(Course course, Faculty faculty, Subject subject, Teacher teacher, String date, String typeOfWork, LocalDate createdAt) {
+    public Lesson(Course course, Faculty faculty, Subject subject, Teacher teacher, String typeOfWork, String pairNumber, LocalDate date) {
         this.course = course;
         this.faculty = faculty;
         this.subject = subject;
         this.teacher = teacher;
-        this.date = date;
         this.typeOfWork = typeOfWork;
-        this.createdAt = createdAt;
+        this.pairNumber = pairNumber;
+        this.date = date;
     }
 
     public Lesson() {
@@ -94,14 +94,6 @@ public class Lesson {
         this.teacher = teacher;
     }
 
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public String getTypeOfWork() {
         return typeOfWork;
     }
@@ -110,11 +102,19 @@ public class Lesson {
         this.typeOfWork = typeOfWork;
     }
 
-    public LocalDate getCreatedAt() {
-        return createdAt;
+    public String getPairNumber() {
+        return pairNumber;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
+    public void setPairNumber(String pairNumber) {
+        this.pairNumber = pairNumber;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

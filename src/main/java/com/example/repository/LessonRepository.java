@@ -14,9 +14,11 @@ import java.util.Optional;
 public interface LessonRepository extends JpaRepository<Lesson, Integer> {
 
 
-    Optional<Lesson> findBySubjectAndDate(Subject subject, String date);
+//    Optional<Lesson> findBySubjectAndDate(Subject subject, LocalDate date);
 
-    Optional<Lesson> findByDate(String date);
+//    Optional<Lesson> findByDate(String date);
+//
+//    long deleteByCreatedAtBefore(Date date);
 
-    long deleteByCreatedAtBefore(Date date);
+        Optional<Lesson> findBySubjectAndDateAndPairNumber(Subject subject, LocalDate date, String pairNumber);
 }

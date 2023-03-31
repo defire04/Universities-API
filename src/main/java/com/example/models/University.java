@@ -26,12 +26,12 @@ public class University {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "department_id")
     @JsonIgnoreProperties("university")
-    private List<Department> departments;
+    private final List<Department> departments = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "university_id")
     @JsonIgnoreProperties("university")
-    private List<Faculty> faculty;
+    private final List<Faculty> faculty = new ArrayList<>();
 
 
     public University() {
@@ -69,10 +69,6 @@ public class University {
         return departments;
     }
 
-    public void setDepartments(List<Department> departments) {
-        this.departments = departments;
-    }
-
     public List<Faculty> getFaculty() {
         return faculty;
     }
@@ -97,8 +93,8 @@ public class University {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (link != null ? link.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (departments != null ? departments.hashCode() : 0);
-        result = 31 * result + (faculty != null ? faculty.hashCode() : 0);
+        result = 31 * result + departments.hashCode();
+        result = 31 * result + faculty.hashCode();
         return result;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.parser;
 
+import com.example.dto.LessonItem;
 import com.example.models.*;
 import com.example.services.*;
 import org.jsoup.Connection;
@@ -15,10 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 @Component
@@ -115,7 +113,7 @@ public class UniParser {
     }
 
 
-    public void parseSchedule(String uniUrl, String facultyValue, String courseValue, String groupValue) throws IOException, ParseException {
+    public List<LessonItem> parseSchedule(String uniUrl, String facultyValue, String courseValue, String groupValue) throws IOException {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         String now = dateFormat.format(calendar.getTime());
@@ -138,32 +136,30 @@ public class UniParser {
 
         Elements elements = doc.select("[data-content]");
 
+        List<LessonItem> lessonItems = new ArrayList<>();
+
         for (Element el : elements) {
             String[] lessonData = el.attr("data-content").split("<br>");
             String dataAndTime = el.attr("title");
 
-//            Date date =  dateFormat.parse(dataAndTime.split(" ")[0]);
             LocalDate date = LocalDate.parse(dataAndTime.split(" ")[0], formatter);
 
-            Teacher teacher = teacherService.findByFullName(lessonData[3]).orElseGet(() -> teacherService.save(new Teacher(lessonData[3])));
-            Subject subject = subjectService.findByTitleAndTeachersContaining(lessonData[0].replaceAll("\\[.*?\\]", ""), teacher)
-                    .orElseGet(() -> {
-                        Subject newSub = new Subject(lessonData[0].replaceAll("\\[.*?\\]", ""));
-                        newSub.getTeachers().add(teacher);
-                        return subjectService.save(newSub);
-                    });
+            LessonItem lessonItem = new LessonItem();
+            lessonItem.setTeacher(lessonData[3]);
+            lessonItem.setSubject(lessonData[0].replaceAll("\\[.*?\\]", ""));
+            lessonItem.setFaculty(facultyValue);
+            lessonItem.setCourse(courseValue);
+            lessonItem.setLessonDate(date);
+            lessonItem.setPairNumber(dataAndTime.split(" ")[1]);
 
-            Lesson lesson = lessonService.findBySubjectAndDate(subject, dataAndTime).orElseGet(() -> {
-                        Faculty faculty = facultyService.findByValueOnSite(facultyValue).orElseThrow(RuntimeException::new);
-                        Course course = courseService.findByFacultyAndValueOnSite(faculty, courseValue).orElseThrow(RuntimeException::new);
 
-                        return lessonService.save(new Lesson(course,
-                                faculty, subject, teacher, dataAndTime,
-                                lessonData[0].replaceAll("[^\\[\\]]*\\[([^\\[\\]]*)\\].*", "$1"),
-                                date
-                        ));
-                    });
+            lessonItems.add(lessonItem);
+
+
         }
+
+
+        return lessonItems;
     }
 
 

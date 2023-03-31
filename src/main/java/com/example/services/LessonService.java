@@ -29,14 +29,14 @@ public class LessonService {
         return lesson;
     }
 
-    public Optional<Lesson> findBySubjectAndDate(Subject subject, String date) {
-        return lessonRepository.findBySubjectAndDate(subject, date);
+    public Optional<Lesson> findBySubjectAndDateAndPairNumber(Subject subject, LocalDate date, String pairNumber) {
+        return lessonRepository.findBySubjectAndDateAndPairNumber(subject, date, pairNumber);
     }
 
 
-    public Optional<Lesson> findByDate(String date){
-        return lessonRepository.findByDate(date);
-    }
+//    public Optional<Lesson> findByDate(String date){
+//        return lessonRepository.findByDate(date);
+//    }
 
     public List<Lesson> getAllLessons(){
         return lessonRepository.findAll();
