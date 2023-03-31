@@ -2,6 +2,9 @@ package com.example.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 
 @Entity
 @Table(name = "lesson")
@@ -11,20 +14,20 @@ public class Lesson {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subject_id")
     private Subject subject;
 
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
@@ -34,13 +37,17 @@ public class Lesson {
     @Column(name = "date")
     private String date;
 
-    public Lesson(Course course, Faculty faculty, Subject subject, Teacher teacher, String date, String typeOfWork) {
+    @Column(name = "created_At")
+    private LocalDate createdAt;
+
+    public Lesson(Course course, Faculty faculty, Subject subject, Teacher teacher, String date, String typeOfWork, LocalDate createdAt) {
         this.course = course;
         this.faculty = faculty;
         this.subject = subject;
         this.teacher = teacher;
         this.date = date;
         this.typeOfWork = typeOfWork;
+        this.createdAt = createdAt;
     }
 
     public Lesson() {
@@ -101,5 +108,13 @@ public class Lesson {
 
     public void setTypeOfWork(String typeOfWork) {
         this.typeOfWork = typeOfWork;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 }

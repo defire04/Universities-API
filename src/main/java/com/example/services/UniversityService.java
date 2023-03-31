@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class UniversityService {
     private final UniversityRepository universityRepository;
 
@@ -17,26 +19,27 @@ public class UniversityService {
         this.universityRepository = universityRepository;
     }
 
-
+    @Transactional
     public University save(University university) {
         if (university.getLink() == null) {
-           throw new NullPointerException();
+            throw new NullPointerException();
         }
 
         universityRepository.save(university);
         return university;
     }
 
-    public boolean existsByLink(String link) {
-        return universityRepository.existsByLink(link);
-    }
-
-
-    public University getOrCreateUniversityByLink(String link) {
-        return save(universityRepository.findByLink(link).orElse(new University(link)));
-    }
 
     public void update(University university) {
-       save(university);
+        save(university);
+    }
+
+    public Optional<University> findByLink(String link) {
+        return universityRepository.findByLink(link);
+    }
+
+    public List<University> findAll(){
+        System.out.println("1111");
+        return universityRepository.findAll();
     }
 }

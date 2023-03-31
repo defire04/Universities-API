@@ -1,5 +1,8 @@
 package com.example.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -14,16 +17,18 @@ public class Faculty {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "university_id")
+    @JsonBackReference
     private University university;
 
     @Column(name = "title")
     private String title;
 
-    @OneToMany
+    @OneToMany()
     @JoinColumn(name = "faculty_id")
-    private Set<Course> courses = new HashSet<>();
+    @JsonIgnore
+    private Set<Course> courses;
 
     @Column(name ="value")
     private String valueOnSite;

@@ -25,11 +25,11 @@ public class Teacher {
 //            joinColumns = {@JoinColumn(name = "department_id")},
 //            inverseJoinColumns = {@JoinColumn(name = "teacher_id")}
 //    )
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany(mappedBy = "teachers", fetch = FetchType.LAZY)
     private List<Subject> subjects = new ArrayList<>();
 
     public Teacher() {

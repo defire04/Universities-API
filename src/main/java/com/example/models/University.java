@@ -2,10 +2,13 @@ package com.example.models;
 
 
 //import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class University {
@@ -22,11 +25,13 @@ public class University {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "department_id")
+    @JsonIgnoreProperties("university")
     private List<Department> departments;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "university_id")
-    private List<Faculty> faculty = new ArrayList<>();
+    @JsonIgnoreProperties("university")
+    private List<Faculty> faculty;
 
 
     public University() {
@@ -70,5 +75,30 @@ public class University {
 
     public List<Faculty> getFaculty() {
         return faculty;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        University that = (University) o;
+        if (!Objects.equals(id, that.id) || !Objects.equals(link, that.link) ||
+                !Objects.equals(title, that.title) || !Objects.equals(departments, that.departments)) {
+            return false;
+        }
+        return Objects.equals(faculty, that.faculty);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (link != null ? link.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (departments != null ? departments.hashCode() : 0);
+        result = 31 * result + (faculty != null ? faculty.hashCode() : 0);
+        return result;
     }
 }

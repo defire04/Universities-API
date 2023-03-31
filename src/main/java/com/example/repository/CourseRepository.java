@@ -16,4 +16,7 @@ public interface CourseRepository  extends JpaRepository<Course, Integer> {
     Optional<Course> findCourseByFacultyAndNumber(Faculty faculty, String number);
 
     Optional<Course> findByFacultyAndValueOnSite(Faculty faculty, String valueOnSite);
+
+     List<Course> findByFaculty(Faculty faculty);
+
 }

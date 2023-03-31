@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,8 +31,13 @@ public class CourseService {
         return courseRepository.findCourseByFacultyAndNumber(faculty, number);
     }
 
-    public Course findByFacultyValueOnSite(Faculty faculty, String valueOnSite) {
-        return courseRepository.findByFacultyAndValueOnSite(faculty, valueOnSite).orElse(null);
+    public Optional<Course> findByFacultyAndValueOnSite(Faculty faculty, String valueOnSite) {
+        return courseRepository.findByFacultyAndValueOnSite(faculty, valueOnSite);
     }
+
+    public List<Course> findByFaculty(Faculty faculty) {
+        return courseRepository.findByFaculty(faculty);
+    }
+
 
 }
