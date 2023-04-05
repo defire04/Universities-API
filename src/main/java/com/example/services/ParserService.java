@@ -6,7 +6,9 @@ import com.example.parser.UniParser;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ParserService {
@@ -56,24 +58,28 @@ public class ParserService {
         }
 
         return lessonService.getAllLessons();
+    }
 
-        //            Teacher teacher = teacherService.findByFullName(lessonData[3]).orElseGet(() -> teacherService.save(new Teacher(lessonData[3])));
-//            Subject subject = subjectService.findByTitleAndTeachersContaining(lessonData[0].replaceAll("\\[.*?\\]", ""), teacher)
-//                    .orElseGet(() -> {
-//                        Subject newSub = new Subject(lessonData[0].replaceAll("\\[.*?\\]", ""));
-//                        newSub.getTeachers().add(teacher);
-//                        return subjectService.save(newSub);
-//                    });
-//
-//            Lesson lesson = lessonService.findBySubjectAndDate(subject, dataAndTime).orElseGet(() -> {
-//                        Faculty faculty = facultyService.findByValueOnSite(facultyValue).orElseThrow(RuntimeException::new);
-//                        Course course = courseService.findByFacultyAndValueOnSite(faculty, courseValue).orElseThrow(RuntimeException::new);
-//
-//                        return lessonService.save(new Lesson(course,
-//                                faculty, subject, teacher, dataAndTime,
-//                                lessonData[0].replaceAll("[^\\[\\]]*\\[([^\\[\\]]*)\\].*", "$1"),
-//                                date
-//                        ));
-//                    });
+
+    public University registerOrUpdateUniversityInfo(String uniUrl) throws IOException {
+
+        Optional<University> universityOptional = universityService.findByLink(uniUrl);
+        if (universityOptional.isPresent() && universityOptional.get().getLastUpdate().isAfter(LocalDate.now().minusDays(1)) ){
+            return universityOptional.get();
+        }
+
+        University university = uniParser.registerUniversity(uniUrl);
+
+        List<Faculty> faculties = uniParser.parseFaculty(universityService.save(university));
+
+        for (Faculty faculty : facultyService.save(faculties)) {
+            List<Course> coursesInFaculty = uniParser.parseCourse(university, faculty);
+            for (Course course : courseService.save(coursesInFaculty)) {
+                List<Group> groups = uniParser.parseGroup(university, course, faculty);
+                groupService.save(groups);
+            }
+        }
+
+        return universityService.findByLink(uniUrl).orElseGet(University::new);
     }
 }

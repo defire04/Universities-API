@@ -40,15 +40,15 @@ public class UniParser {
         this.teacherService = teacherService;
     }
 
-    public void parseNecessaryInfoForUniversity(String uniUrl) throws IOException {
+    public University registerUniversity(String uniUrl) throws IOException {
         Document doc = getConnection(uniUrl).get();
+        return new University(uniUrl, doc.getElementsByClass("header").get(0).text());
+    }
 
-        University university = universityService.findByLink(uniUrl).orElseGet(() ->
-                universityService.save(new University(uniUrl)));
-        if (university.getTitle() == null) {
-            university.setTitle(doc.getElementsByClass("header").get(0).text());
-            universityService.update(university);
-        }
+    public List<Faculty> parseFaculty(University university) throws IOException {
+        Document doc = getConnection(university.getLink()).get();
+
+        List<Faculty> resultList = new ArrayList<>();
 
         Elements facultiesTitle = doc.select("select#timetableform-facultyid");
 
@@ -59,20 +59,14 @@ public class UniParser {
             if (facultyVal.isEmpty()) {
                 continue;
             }
-
-            Faculty newFaculty = facultyService.findByTitleAndUniversity(facultyTitle, university)
-                    .orElseGet(() -> facultyService.save(new Faculty(university, facultyTitle, facultyVal)));
+            resultList.add(new Faculty(university, facultyTitle, facultyVal));
         }
-
-
-        for (Faculty faculty : university.getFaculty()) {
-            parseCourse(uniUrl, faculty);
-        }
-
+        return resultList;
     }
 
-    private void parseCourse(String uniUrl, Faculty faculty) throws IOException {
-        Document doc = getConnection(uniUrl).data("TimeTableForm[facultyId]", faculty.getValueOnSite()).post();
+    public List<Course> parseCourse(University university, Faculty faculty) throws IOException {
+        Document doc = getConnection(university.getLink()).data("TimeTableForm[facultyId]", faculty.getValueOnSite()).post();
+        List<Course> resultList = new ArrayList<>();
 
         for (Element option : Objects.requireNonNull(doc.getElementById("timetableform-course")).select("option")) {
             String courseNumber = option.val();
@@ -80,22 +74,18 @@ public class UniParser {
             if (courseNumber.isEmpty()) {
                 continue;
             }
-            Course newCourse = courseService.findCourseByFacultyAndNumber(faculty, courseNumber)
-                    .orElseGet(() -> courseService.save(new Course(courseNumber, faculty, option.val())));
+
+            resultList.add(new Course(courseNumber, faculty, option.val()));
+
         }
 
-        for (Course course : faculty.getCourses()) {
-            parseGroup(uniUrl, course, faculty);
-        }
-
-//        faculty.getCourses().forEach(x -> System.out.println(x.getFaculty().getTitle() + " " + x.getNumber()));
-
+        return resultList;
     }
 
 
-    private void parseGroup(String uniUrl, Course course, Faculty faculty) throws IOException {
-
-        Document doc = getConnection(uniUrl)
+    public List<Group> parseGroup(University university, Course course, Faculty faculty) throws IOException {
+        List<Group> resultList = new ArrayList<>();
+        Document doc = getConnection(university.getLink())
                 .data("TimeTableForm[facultyId]", faculty.getValueOnSite())
                 .data("TimeTableForm[course]", course.getValueOnSite())
                 .post();
@@ -107,20 +97,21 @@ public class UniParser {
                 continue;
             }
 
-            Group newGroup = groupService.findGroupByCourseAndValueOnSite(course, groupValue)
-                    .orElseGet(() -> groupService.save(new Group(course, option.text(), groupValue)));
+            resultList.add(new Group(course, option.text(), groupValue));
+
         }
+
+
+        return resultList;
     }
 
 
     public List<LessonItem> parseSchedule(String uniUrl, String facultyValue, String courseValue, String groupValue) throws IOException {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        String now = dateFormat.format(calendar.getTime());
-        calendar.add(Calendar.DAY_OF_YEAR, 7);
-        String featureDate = dateFormat.format(calendar.getTime());
-        calendar.add(Calendar.DAY_OF_YEAR, -14);
-        String pastDate = dateFormat.format(calendar.getTime());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        LocalDate now = LocalDate.now();
+        String featureDate = now.plusDays(7).format(formatter);
+        String pastDate = now.minusDays(14).format(formatter);
 
         Document doc = getConnection(uniUrl)
                 .data("TimeTableForm[facultyId]", facultyValue)
@@ -132,7 +123,7 @@ public class UniParser {
                 .data("TimeTableForm[indicationDays]", "5")
                 .data("time-table-type", "1")
                 .post();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
 
         Elements elements = doc.select("[data-content]");
 
@@ -161,7 +152,6 @@ public class UniParser {
 
         return lessonItems;
     }
-
 
 
     private Connection getConnection(String url) throws IOException {

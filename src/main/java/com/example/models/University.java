@@ -6,6 +6,7 @@ package com.example.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,15 +31,22 @@ public class University {
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "university_id")
-    @JsonIgnoreProperties("university")
+//    @JsonIgnoreProperties("university")
     private final List<Faculty> faculty = new ArrayList<>();
 
+    @Column(name = "last_update")
+    private LocalDate lastUpdate;
 
     public University() {
     }
 
     public University(String link) {
         this.link = link;
+    }
+
+    public University(String link, String title) {
+        this.link = link;
+        this.title = title;
     }
 
     public Long getId() {
@@ -71,6 +79,14 @@ public class University {
 
     public List<Faculty> getFaculty() {
         return faculty;
+    }
+
+    public LocalDate getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(LocalDate lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     @Override

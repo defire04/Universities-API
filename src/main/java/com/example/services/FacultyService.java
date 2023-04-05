@@ -10,11 +10,11 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
 public class FacultyService {
     private final FacultyRepository facultyRepository;
 
@@ -23,21 +23,34 @@ public class FacultyService {
         this.facultyRepository = facultyRepository;
     }
 
-    @Transactional
+
     public Faculty save(Faculty faculty) {
         facultyRepository.save(faculty);
         return faculty;
+    }
+
+
+    public List<Faculty> save(List<Faculty> faculties) {
+        List<Faculty> result = new ArrayList<>();
+        faculties.forEach(faculty -> {
+            result.add(findByTitleAndUniversity(faculty.getTitle(), faculty.getUniversity())
+                    .orElseGet(() -> save(new Faculty(faculty.getUniversity(), faculty.getTitle(), faculty.getValueOnSite()))));
+        });
+
+        return result;
     }
 
     public Optional<Faculty> findByTitleAndUniversity(String title, University university) {
         return facultyRepository.findByTitleAndUniversity(title, university);
     }
 
-    public Optional<Faculty> findByValueOnSite(String valueOnSite)  {
+    public Optional<Faculty> findByValueOnSite(String valueOnSite) {
         return facultyRepository.findByValueOnSite(valueOnSite);
     }
 
-    public List<Faculty> findByUniversity(University university){
+    public List<Faculty> findByUniversity(University university) {
         return facultyRepository.findByUniversity(university);
     }
+
+
 }

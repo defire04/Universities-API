@@ -6,11 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
+
 public class UniversityService {
     private final UniversityRepository universityRepository;
 
@@ -19,26 +21,25 @@ public class UniversityService {
         this.universityRepository = universityRepository;
     }
 
-    @Transactional
-    public University save(University university) {
-        if (university.getLink() == null) {
-            throw new NullPointerException();
-        }
 
-        universityRepository.save(university);
-        return university;
+    public University save(University university) {
+        University uniResult = findByLink(university.getLink()).orElseGet(() ->
+                universityRepository.save(new University(university.getLink(), university.getTitle())));
+
+        uniResult.setLastUpdate(LocalDate.now());
+        return uniResult;
     }
 
 
     public void update(University university) {
-        save(university);
+        universityRepository.save(university);
     }
 
     public Optional<University> findByLink(String link) {
         return universityRepository.findByLink(link);
     }
 
-    public List<University> findAll(){
+    public List<University> findAll() {
         System.out.println("1111");
         return universityRepository.findAll();
     }

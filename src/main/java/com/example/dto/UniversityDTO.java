@@ -4,6 +4,7 @@ import com.example.models.Department;
 import com.example.models.Faculty;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +13,8 @@ public class UniversityDTO {
     private String title;
 //    private List<Department> departments;
     private List<Faculty> faculty;
+
+    private LocalDate lastUpdate;
 
     public String getLink() {
         return link;
@@ -36,7 +39,16 @@ public class UniversityDTO {
     public void setFaculty(List<Faculty> faculty) {
         this.faculty = faculty;
     }
-//    public List<Department> getDepartments() {
+
+    public LocalDate getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(LocalDate lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    //    public List<Department> getDepartments() {
 //        return departments;
 //    }
 //

@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)
 public class CourseService {
     private final CourseRepository courseRepository;
 
@@ -20,11 +20,22 @@ public class CourseService {
         this.courseRepository = courseRepository;
     }
 
-    @Transactional
+
     public Course save(Course course) {
         courseRepository.save(course);
 
         return course;
+    }
+
+
+    public List<Course> save(List<Course> courses) {
+        List<Course> result = new ArrayList<>();
+        courses.forEach(course -> {
+            result.add(findCourseByFacultyAndNumber(course.getFaculty(), course.getNumber())
+                    .orElseGet(() -> courseRepository.save(new Course(course.getNumber(), course.getFaculty(), course.getValueOnSite()))));
+        });
+
+        return result;
     }
 
     public Optional<Course> findCourseByFacultyAndNumber(Faculty faculty, String number) {

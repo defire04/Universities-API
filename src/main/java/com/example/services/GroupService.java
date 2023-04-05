@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 
 @Service
-@Transactional(readOnly = true)
 public class GroupService {
     private final GroupRepository groupRepository;
 
@@ -22,10 +22,21 @@ public class GroupService {
         this.groupRepository = groupRepository;
     }
 
-    @Transactional
+
     public Group save(Group group) {
         groupRepository.save(group);
         return group;
+    }
+
+
+    public List<Group> save(List<Group> groups) {
+        List<Group> result = new ArrayList<>();
+        groups.forEach(group -> {
+            result.add(findGroupByCourseAndValueOnSite(group.getCourse(), group.getValueOnSite())
+                    .orElseGet(() -> groupRepository.save(new Group(group.getCourse(), group.getTitle(), group.getValueOnSite()))));
+        });
+
+        return result;
     }
 
     public List<Group> findAll() {
@@ -33,10 +44,10 @@ public class GroupService {
     }
 
     public Optional<Group> findById(int id) {
-        return  groupRepository.findById(id);
+        return groupRepository.findById(id);
     }
 
-    public Optional<Group> findGroupByCourseAndValueOnSite(Course course, String valueOnSite){
+    public Optional<Group> findGroupByCourseAndValueOnSite(Course course, String valueOnSite) {
         return groupRepository.findGroupByCourseAndValueOnSite(course, valueOnSite);
     }
 }
