@@ -1,10 +1,13 @@
-package com.example.services;
+package com.example.services.mappers;
 
 import com.example.dto.UniversityDTO;
 import com.example.models.University;
 import org.springframework.stereotype.Service;
 
 import org.modelmapper.ModelMapper;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UniversityMapperService {
@@ -22,4 +25,7 @@ public class UniversityMapperService {
     }
 
 
+    public List<UniversityDTO> convertUniversityListToUniversityDTOList(List<University> universities){
+        return universities.stream().map(this::convertUniversityToUniversityDTO).collect(Collectors.toList());
+    }
 }

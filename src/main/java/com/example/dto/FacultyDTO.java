@@ -1,18 +1,25 @@
 package com.example.dto;
 
 import com.example.models.Course;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import com.example.models.University;
+
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class FacultyDTO {
-
+    private University university;
     private String title;
     private Set<Course> courses = new HashSet<>();
     private String valueOnSite;
+
+    public University getUniversity() {
+        return university;
+    }
+
+    public void setUniversity(University university) {
+        this.university = university;
+    }
 
     public String getTitle() {
         return title;

@@ -1,8 +1,9 @@
-package com.example.services;
+package com.example.parser.service;
 
 import com.example.dto.LessonItem;
 import com.example.models.*;
 import com.example.parser.UniParser;
+import com.example.services.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,7 +36,6 @@ public class ParserService {
     }
 
     public List<Lesson> parseSchedule(String uniUrl, String facultyValue, String courseValue, String groupValue) throws IOException {
-//        System.out.println(uniParser.parseSchedule(uniUrl, facultyValue, courseValue, groupValue));
 
         for (LessonItem lessonItem : uniParser.parseSchedule(uniUrl, facultyValue, courseValue, groupValue)) {
             Teacher teacher = teacherService.findByFullName(lessonItem.getTeacher()).orElseGet(() -> teacherService.save(new Teacher(lessonItem.getTeacher())));
@@ -82,4 +82,6 @@ public class ParserService {
 
         return universityService.findByLink(uniUrl).orElseGet(University::new);
     }
+
+
 }

@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
+
 public class Test {
 
 
@@ -47,23 +48,23 @@ public class Test {
 //        Parser.parseFaculty(new University("https://e-rozklad.dut.edu.ua/time-table/group?type=0", "ДУТ"));
 
 
-        String url = "https://e-rozklad.dut.edu.ua/time-table/group?type=0";
-        Connection connection = Jsoup.connect(url).header("Connection", "keep-alive");
-        String csrfToken = connection.get().select("meta[name=\"csrf-token\"]").attr("content");
+//        String url = "https://e-rozklad.dut.edu.ua/time-table/group?type=0";
+//        Connection connection = Jsoup.connect(url).header("Connection", "keep-alive");
+//        String csrfToken = connection.get().select("meta[name=\"csrf-token\"]").attr("content");
+////
+//        connection
+//                .header("Content-Type", "application/x-www-form-urlencoded")
+//                .data("_csrf-frontend", csrfToken)
+//                .data("TimeTableForm[facultyId]", "3")
+//                .data("TimeTableForm[course]", "1")
+//        ;
+
+//        prepareALink("http://localhost:8080/univerity?university=htt.edu.ua/time-table/group?faculty=1");
+
+//        Document doc = connection.post();
 //
-        connection
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .data("_csrf-frontend", csrfToken)
-                .data("TimeTableForm[facultyId]", "3")
-                .data("TimeTableForm[course]", "1")
-        ;
-
-
-
-        Document doc = connection.post();
-
-        Element form = doc.getElementById("filter-form");
-        System.out.println(form);
+//        Element form = doc.getElementById("filter-form");
+//        System.out.println(form);
 
 //        Element select = form.getElementById("timetableform-facultyid");
 //        Elements options = select.select("option");
@@ -85,19 +86,11 @@ public class Test {
 //        System.out.println(document.getElementById("filter-form").select("option"));
 
 
-
-
-
-
-
-
-
-
-
-
 //        System.out.println(doc.getElementById("timetableform-course"));
 //        System.out.println(doc.select("select2-field"));
     }
+
+
 }
 
 

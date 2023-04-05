@@ -23,6 +23,8 @@ public class UniversityService {
 
 
     public University save(University university) {
+        university.setLink(prepareUniversityLink(university.getLink()));
+
         University uniResult = findByLink(university.getLink()).orElseGet(() ->
                 universityRepository.save(new University(university.getLink(), university.getTitle())));
 
@@ -36,11 +38,23 @@ public class UniversityService {
     }
 
     public Optional<University> findByLink(String link) {
-        return universityRepository.findByLink(link);
+        return universityRepository.findByLink(prepareUniversityLink(link));
     }
 
     public List<University> findAll() {
-        System.out.println("1111");
         return universityRepository.findAll();
+    }
+
+
+    public String prepareUniversityLink(String link) {
+
+        int startIndex = link.indexOf("https://e-rozklad");
+        int endIndex = link.indexOf(".edu.ua");
+
+        if(startIndex == -1 || endIndex == -1){
+            throw new RuntimeException();
+        }
+
+        return link.substring(startIndex, endIndex + 7);
     }
 }

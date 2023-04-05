@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -41,12 +39,12 @@ public class UniParser {
     }
 
     public University registerUniversity(String uniUrl) throws IOException {
-        Document doc = getConnection(uniUrl).get();
+        Document doc = getConnectionForTimeTableGroup(uniUrl).get();
         return new University(uniUrl, doc.getElementsByClass("header").get(0).text());
     }
 
     public List<Faculty> parseFaculty(University university) throws IOException {
-        Document doc = getConnection(university.getLink()).get();
+        Document doc = getConnectionForTimeTableGroup(university.getLink()).get();
 
         List<Faculty> resultList = new ArrayList<>();
 
@@ -65,7 +63,7 @@ public class UniParser {
     }
 
     public List<Course> parseCourse(University university, Faculty faculty) throws IOException {
-        Document doc = getConnection(university.getLink()).data("TimeTableForm[facultyId]", faculty.getValueOnSite()).post();
+        Document doc = getConnectionForTimeTableGroup(university.getLink()).data("TimeTableForm[facultyId]", faculty.getValueOnSite()).post();
         List<Course> resultList = new ArrayList<>();
 
         for (Element option : Objects.requireNonNull(doc.getElementById("timetableform-course")).select("option")) {
@@ -85,7 +83,7 @@ public class UniParser {
 
     public List<Group> parseGroup(University university, Course course, Faculty faculty) throws IOException {
         List<Group> resultList = new ArrayList<>();
-        Document doc = getConnection(university.getLink())
+        Document doc = getConnectionForTimeTableGroup(university.getLink())
                 .data("TimeTableForm[facultyId]", faculty.getValueOnSite())
                 .data("TimeTableForm[course]", course.getValueOnSite())
                 .post();
@@ -113,7 +111,7 @@ public class UniParser {
         String featureDate = now.plusDays(7).format(formatter);
         String pastDate = now.minusDays(14).format(formatter);
 
-        Document doc = getConnection(uniUrl)
+        Document doc = getConnectionForTimeTableGroup(uniUrl)
                 .data("TimeTableForm[facultyId]", facultyValue)
                 .data("TimeTableForm[course]", courseValue)
                 .data("TimeTableForm[groupId]", groupValue)
@@ -145,8 +143,6 @@ public class UniParser {
 
 
             lessonItems.add(lessonItem);
-
-
         }
 
 
@@ -154,12 +150,13 @@ public class UniParser {
     }
 
 
-    private Connection getConnection(String url) throws IOException {
-        Connection connection = Jsoup.connect(url).header("Connection", "keep-alive");
+    private Connection getConnectionForTimeTableGroup(String url) throws IOException {
+        Connection connection = Jsoup.connect(url + "/time-table/group").header("Connection", "keep-alive");
         String csrfToken = connection.get().select("meta[name=\"csrf-token\"]").attr("content");
         connection
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .data("_csrf-frontend", csrfToken);
+                .data("_csrf-frontend", csrfToken)
+                .data("type", "0");
         return connection;
     }
 }
