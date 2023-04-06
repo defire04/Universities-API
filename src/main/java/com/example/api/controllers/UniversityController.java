@@ -56,30 +56,31 @@ public class UniversityController {
         this.groupMapperService = groupMapperService;
     }
 
-    @GetMapping("/getAll")
+    @GetMapping("/get-all-universities")
     public List<UniversityDTO> getAll() {
         return universityMapperService.convertUniversityListToUniversityDTOList(universityService.findAll());
     }
 
-    @GetMapping("")
-    public UniversityDTO universityByLink(@RequestParam() String university) {
-        return universityMapperService.convertUniversityToUniversityDTO(universityService.findByLink(university).orElse(null));
+    @GetMapping("/get-university")
+    public UniversityDTO universityByLink(@RequestParam() String universityLink) {
+        return universityMapperService.convertUniversityToUniversityDTO(universityService.findByLink(universityLink).orElse(null));
     }
 
-    @GetMapping("/registerOrUpdate")
-    public UniversityDTO registerOrUpdate(@RequestParam() String university) throws IOException {
-        return universityMapperService.convertUniversityToUniversityDTO(parserService.registerOrUpdateUniversityInfo(university));
+    @GetMapping("/register-or-update")
+    public UniversityDTO registerOrUpdate(@RequestParam() String universityLink) throws IOException {
+        return universityMapperService.convertUniversityToUniversityDTO(parserService.registerOrUpdateUniversityInfo(universityLink));
     }
 
-    @GetMapping("/getFacultiesByUniversity")
-    public List<FacultyDTO> getFacultiesByUniversity(@RequestParam() String university) {
-        return facultyMapperService.convertFacultyListToFacultyDTOList(facultyService.findByUniversity(universityService.findByLink(university)
+
+    @GetMapping("/get-faculties")
+    public List<FacultyDTO> getFacultiesByUniversity(@RequestParam() Integer universityId) {
+        return facultyMapperService.convertFacultyListToFacultyDTOList(facultyService.findByUniversity(universityService.findById(universityId)
                 .orElseGet(University::new)));
     }
 
-    @GetMapping("/getCourseByUniversityAndFacultyValue")
-    public List<CourseDTO> getCourseByFaculty(@RequestParam() String university, @RequestParam() String facultyValue) throws ChangeSetPersister.NotFoundException {
-        University foundUni = universityService.findByLink(university).orElseThrow(ChangeSetPersister.NotFoundException::new);
+    @GetMapping("/get-courses")
+    public List<CourseDTO> getCourseByFaculty(@RequestParam() Integer universityId, @RequestParam() String facultyValue) throws ChangeSetPersister.NotFoundException {
+        University foundUni = universityService.findById(universityId).orElseThrow(ChangeSetPersister.NotFoundException::new);
 
         return courseMapperService.convertCourseListToCourseDTOList(
                 courseService.findByFaculty(facultyService.findByUniversityAndValueOnSite(foundUni, facultyValue).orElseThrow(ChangeSetPersister.NotFoundException::new))
@@ -87,10 +88,10 @@ public class UniversityController {
     }
 
 
-    @GetMapping("/getGroupByUniversityAndFacultyValueAndCourseAndGroupValue")
-    public GroupDTO getGroupByUniversityAndFacultyValueAndCourse(@RequestParam() String university, @RequestParam() String facultyValue,
+    @GetMapping("/get-group")
+    public GroupDTO getGroupByUniversityAndFacultyValueAndCourse(@RequestParam() Integer universityId, @RequestParam() String facultyValue,
                                                                  @RequestParam() String course, @RequestParam String groupValue) throws ChangeSetPersister.NotFoundException {
-        University foundUni = universityService.findByLink(university).orElseThrow(ChangeSetPersister.NotFoundException::new);
+        University foundUni = universityService.findById(universityId).orElseThrow(ChangeSetPersister.NotFoundException::new);
         Faculty foundFaculty = facultyService.findByUniversityAndValueOnSite(foundUni, facultyValue).orElseThrow(ChangeSetPersister.NotFoundException::new);
         Course foundCourse = courseService.findCourseByFacultyAndNumber(foundFaculty, course).orElseThrow(ChangeSetPersister.NotFoundException::new);
 

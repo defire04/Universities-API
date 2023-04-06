@@ -37,6 +37,10 @@ public class UniversityService {
         return universityRepository.findByLink(prepareUniversityLink(link));
     }
 
+    public Optional<University> findById(Integer id) {
+        return universityRepository.findById(id);
+    }
+
     public List<University> findAll() {
         return universityRepository.findAll();
     }

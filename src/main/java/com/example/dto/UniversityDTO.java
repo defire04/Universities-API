@@ -9,12 +9,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UniversityDTO {
+
+    private Long id;
     private String link;
     private String title;
 //    private List<Department> departments;
     private List<Faculty> faculty;
 
     private LocalDate lastUpdate;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getLink() {
         return link;
