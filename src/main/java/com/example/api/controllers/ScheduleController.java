@@ -5,6 +5,7 @@ import com.example.parser.service.ParserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-
+@RequestMapping("/schedule")
 public class ScheduleController {
 
     private final ParserService parserService;
@@ -22,7 +23,7 @@ public class ScheduleController {
         this.parserService = parserService;
     }
 
-    @GetMapping("/schedule")
+    @GetMapping("group")
     public List<Lesson> scheduleByParam(@RequestParam() String university, @RequestParam() String faculty,
                                         @RequestParam() String course, @RequestParam() String group) throws IOException {
         return parserService.parseSchedule(university, faculty, course, group);

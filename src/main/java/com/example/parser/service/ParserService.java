@@ -68,7 +68,7 @@ public class ParserService {
             return universityOptional.get();
         }
 
-        University university = uniParser.registerUniversity(uniUrl);
+        University university = uniParser.registerUniversity(universityService.prepareUniversityLink(uniUrl));
 
         List<Faculty> faculties = uniParser.parseFaculty(universityService.save(university));
 

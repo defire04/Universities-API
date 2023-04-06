@@ -48,13 +48,12 @@ public class UniversityService {
 
     public String prepareUniversityLink(String link) {
 
-        int startIndex = link.indexOf("https://e-rozklad");
         int endIndex = link.indexOf(".edu.ua");
 
-        if(startIndex == -1 || endIndex == -1){
+        if(endIndex == -1){
             throw new RuntimeException();
         }
 
-        return link.substring(startIndex, endIndex + 7);
+        return link.substring(0, endIndex + 7);
     }
 }
