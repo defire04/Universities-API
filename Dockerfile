@@ -1,8 +1,23 @@
-FROM maven:3.8.5-openjdk-15 AS build
-COPY . .
-RUN mvn clean package -Pprod -DskipTests
+# Используем официальный образ Java 15
+FROM openjdk:15-jdk-slim
 
-FROM adoptopenjdk/openjdk15:alpine-jre
-COPY --from=build /target/demo-0.0.1-SNAPSHOT.jar demo.jar
+# Устанавливаем необходимые пакеты
+RUN apt-get update && \
+    apt-get install -y maven
+
+# Устанавливаем рабочую директорию
+WORKDIR /app
+
+# Копируем pom.xml и файлы исходного кода в контейнер
+COPY pom.xml .
+COPY src/ ./src/
+
+# Собираем проект с помощью Maven
+
+RUN mvn package -Djar.finalName=my-app/
+
+# Выставляем порт приложения
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","demo.jar"]
+
+# Запускаем приложение при помощи команды java
+CMD ["java", "-jar", "./target/my-app.jar"]
