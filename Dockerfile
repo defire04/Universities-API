@@ -12,4 +12,5 @@ FROM openjdk:17-jdk-alpine
 COPY --from=build /target/Universities-API-0.0.1-SNAPSHOT.jar Universities-API-0.0.1-SNAPSHOT.jar
 # ENV PORT=8080
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","Universities-API-0.0.1-SNAPSHOT.jar"]
+
+CMD ["java","-jar","Universities-API-0.0.1-SNAPSHOT.jar"]
