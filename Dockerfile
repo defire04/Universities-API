@@ -1,23 +1,15 @@
-# Используем официальный образ Java 15
-FROM openjdk:15-jdk-slim
+#
+# Build stage
+#
+FROM maven:3.8.5 AS build
+COPY . .
+RUN mvn clean package -Pprod -DskipTests
 
-# Устанавливаем необходимые пакеты
-RUN apt-get update && \
-    apt-get install -y maven
-
-# Устанавливаем рабочую директорию
-WORKDIR /app
-
-# Копируем pom.xml и файлы исходного кода в контейнер
-COPY pom.xml .
-COPY src/ ./src/
-
-# Собираем проект с помощью Maven
-
-RUN mvn package -Djar.finalName=my-app/
-
-# Выставляем порт приложения
+#
+# Package stage
+#
+FROM openjdk:15-jdk-alpine
+COPY --from=build /target/Universities-API-0.0.1-SNAPSHOT.jar demo.jar
+# ENV PORT=8080
 EXPOSE 8080
-
-# Запускаем приложение при помощи команды java
-CMD ["java", "-jar", "./target/my-app.jar"]
+ENTRYPOINT ["java","-jar","Universities-API-0.0.1-SNAPSHOT.jar"]
