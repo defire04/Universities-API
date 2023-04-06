@@ -25,8 +25,8 @@ public class Course {
     private Faculty faculty;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
-    private Set<Group> groups = new HashSet<>();
+
+    private final Set<Group> groups = new HashSet<>();
 
     @Column(name = "value")
     private String valueOnSite;

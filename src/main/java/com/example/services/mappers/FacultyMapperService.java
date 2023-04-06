@@ -1,9 +1,7 @@
 package com.example.services.mappers;
 
 import com.example.dto.FacultyDTO;
-import com.example.dto.UniversityDTO;
 import com.example.models.Faculty;
-import com.example.models.University;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +12,6 @@ import java.util.stream.Collectors;
 public class FacultyMapperService {
 
     private final ModelMapper modelMapper;
-
 
     public FacultyMapperService(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;

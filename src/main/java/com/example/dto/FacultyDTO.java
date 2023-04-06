@@ -8,16 +8,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class FacultyDTO {
-    private University university;
+    private UniversityDTOWithOutFacultyAndDepartments university;
     private String title;
     private Set<Course> courses = new HashSet<>();
     private String valueOnSite;
 
-    public University getUniversity() {
+    public UniversityDTOWithOutFacultyAndDepartments getUniversity() {
         return university;
     }
 
-    public void setUniversity(University university) {
+    public void setUniversity(UniversityDTOWithOutFacultyAndDepartments university) {
         this.university = university;
     }
 

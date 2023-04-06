@@ -52,5 +52,7 @@ public class FacultyService {
         return facultyRepository.findByUniversity(university);
     }
 
-
+    public Optional<Faculty> findByUniversityAndValueOnSite(University university, String valueOnSite){
+        return facultyRepository.findByUniversityAndValueOnSite(university, valueOnSite);
+    }
 }

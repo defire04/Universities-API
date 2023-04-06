@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -49,5 +50,9 @@ public class GroupService {
 
     public Optional<Group> findGroupByCourseAndValueOnSite(Course course, String valueOnSite) {
         return groupRepository.findGroupByCourseAndValueOnSite(course, valueOnSite);
+    }
+
+    public Optional<Group> findByCourse(Course course){
+        return groupRepository.findByCourse(course);
     }
 }

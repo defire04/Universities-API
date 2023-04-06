@@ -4,15 +4,12 @@ import com.example.models.University;
 import com.example.repository.UniversityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 @Service
-
 public class UniversityService {
     private final UniversityRepository universityRepository;
 
@@ -20,7 +17,6 @@ public class UniversityService {
     public UniversityService(UniversityRepository universityRepository) {
         this.universityRepository = universityRepository;
     }
-
 
     public University save(University university) {
         university.setLink(prepareUniversityLink(university.getLink()));
@@ -47,13 +43,13 @@ public class UniversityService {
 
 
     public String prepareUniversityLink(String link) {
-
-        int endIndex = link.indexOf(".edu.ua");
+        String linkEndOn = ".edu.ua";
+        int endIndex = link.indexOf(linkEndOn);
 
         if(endIndex == -1){
             throw new RuntimeException();
         }
 
-        return link.substring(0, endIndex + 7);
+        return link.substring(0, endIndex + linkEndOn.length());
     }
 }

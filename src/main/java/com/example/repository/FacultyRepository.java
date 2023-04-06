@@ -20,4 +20,6 @@ public interface FacultyRepository extends JpaRepository<Faculty, Integer> {
 
     List<Faculty> findFacultiesByUniversity(University university);
 
+    Optional<Faculty> findByUniversityAndValueOnSite(University university, String valueOnSite);
+
 }
